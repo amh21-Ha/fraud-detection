@@ -51,24 +51,16 @@ def create_app():
     async def startup_event():
         global fraud_model
         try:
-            # Create database tables
             create_tables()
             logger.info("✅ Database tables created")
             
-            # Load ML model
+            # Lightweight model - no file loading needed
             fraud_model = FraudDetectionModel()
-            model_path = os.getenv("MODEL_PATH", "models/fraud_model.pkl")
-            
-            # For PythonAnyWhere, use absolute path
-            if not os.path.exists(model_path):
-                model_path = Path(__file__).parent.parent / "models" / "fraud_model.pkl"
-            
-            fraud_model.load_model(str(model_path))
-            logger.info("✅ ML model loaded successfully")
+            logger.info("✅ Rule-based fraud detection ready")
             
         except Exception as e:
             logger.error(f"❌ Startup error: {e}")
-            fraud_model = None
+            fraud_model = FraudDetectionModel()  # Fallback
 
     # Root endpoint - serve dashboard
     @app.get("/", response_class=HTMLResponse)
