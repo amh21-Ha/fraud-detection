@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Financial Fraud Detection</h1>
+            <p>Real-time Machine Learning Fraud Detection System</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Transaction Check Card -->
+            <div class="card">
+                <h3>Transaction Fraud Check</h3>
+                <form id="predictionForm">
+                    <div class="form-group">
+                        <label for="transaction_id">Transaction ID:</label>
+                        <input type="text" id="transaction_id" placeholder="TX_001" value="TX_DEMO_001">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount ($):</label>
+                        <input type="number" id="amount" value="150.50" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="timestamp">Timestamp:</label>
+                        <input type="datetime-local" id="timestamp" required>
+                    </div>
+                    <button type="submit">Check for Fraud</button>
+                </form>
+                <div id="result" class="result">
+                    Submit a transaction to check for fraud
+                </div>
+            </div>
+
+            <!-- System Status Card -->
+            <div class="card">
+                <h3>System Status</h3>
+                <div id="healthStatus" class="status">Checking...</div>
+                <button onclick="dashboard.checkHealth()">Check Health</button>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Quick Test</h4>
+                    <div class="quick-test">
+                        <button class="small">Test $50</button>
+                        <button class="small">Test $500</button>
+                        <button class="small">Test $5000</button>
+                        <button class="small">Test $10000</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Documentation Card -->
+            <div class="card">
+                <h3>API Documentation</h3>
+                <div class="endpoint">
+                    <strong>POST /api/v1/predict</strong>
+                    <p>Check single transaction for fraud</p>
+                    <code>{
+  "transaction_id": "TX_001",
+  "amount": 150.50,
+  "timestamp": "2024-01-15T14:30:00",
+  "merchant_id": "MERCH_001",
+  "customer_id": "CUST_001"
+}</code>
+                </div>
+                
+                <div class="endpoint">
+                    <strong>GET /api/v1/health</strong>
+                    <p>Check system health status</p>
+                </div>
+
+                <div class="endpoint">
+                    <strong>GET /api/v1/transactions</strong>
+                    <p>Get recent transactions</p>
+                </div>
+            </div>
+
+            <!-- About Card -->
+            <div class="card">
+                <h3>About This System</h3>
+                <p>This fraud detection system uses machine learning to identify suspicious financial transactions in real-time.</p>
+                
+                <div style="margin-top: 15px;">
+                    <strong>Features:</strong>
+                    <ul style="margin: 10px 0 10px 20px;">
+                        <li>Real-time fraud prediction</li>
+                        <li>Rule-based detection engine</li>
+                        <li>RESTful API</li>
+                        <li>Interactive dashboard</li>
+                    </ul>
+                </div>
+                
+                <p><a href="/docs" style="color: #667eea; text-decoration: none;">📚 View Full API Documentation</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/dashboard.js"></script>
+</body>
+</html>
