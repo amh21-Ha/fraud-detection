@@ -86,11 +86,12 @@ def create_app():
     # Health check endpoint
     @app.get("/health")
     async def health_check():
-        return JSONResponse({
+        return {
             "status": "healthy" if fraud_model and fraud_model.is_loaded else "degraded",
+            "model_loaded": fraud_model.is_loaded if fraud_model else False,
             "service": "fraud-detection-api",
-            "model_loaded": fraud_model.is_loaded if fraud_model else False
-        })
+            "timestamp": datetime.now().isoformat()  # Use regular datetime
+        }
 
     # Dependency function
     async def get_fraud_model():

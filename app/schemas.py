@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
 
@@ -8,7 +8,11 @@ class RiskLevel(str, Enum):
     MEDIUM = "medium"
     HIGH = "high"
 
-class TransactionBase(BaseModel):
+# Base schema with the fix
+class BaseSchema(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
+class TransactionBase(BaseSchema):
     transaction_id: str = Field(..., min_length=1, max_length=50)
     amount: float = Field(..., gt=0)
     timestamp: datetime
@@ -17,6 +21,12 @@ class TransactionBase(BaseModel):
     currency: str = Field(default="USD")
     location: Optional[str] = None
     country: Optional[str] = None
+
+    @validator('amount')
+    def validate_amount(cls, v):
+        if v <= 0:
+            raise ValueError('Amount must be positive')
+        return v
 
 class TransactionCreate(TransactionBase):
     pass
@@ -32,24 +42,31 @@ class TransactionResponse(TransactionBase):
     class Config:
         from_attributes = True
 
-class FraudPrediction(BaseModel):
+class FraudPrediction(BaseSchema):
     transaction_id: str
     prediction: bool
     probability: float = Field(..., ge=0, le=1)
     risk_level: RiskLevel
     model_version: str
+    features_used: List[str]
 
-class BatchPredictionRequest(BaseModel):
+class BatchPredictionRequest(BaseSchema):
     transactions: List[TransactionCreate]
 
-class BatchPredictionResponse(BaseModel):
+class BatchPredictionResponse(BaseSchema):
     results: List[FraudPrediction]
     total_transactions: int
     fraud_count: int
     fraud_rate: float
 
-class HealthCheck(BaseModel):
+class HealthCheck(BaseSchema):
     status: str
     model_loaded: bool
     service: str
     timestamp: datetime
+
+class ModelInfo(BaseSchema):
+    version: str
+    features: List[str]
+    performance: Dict[str, float]
+    training_date: str
